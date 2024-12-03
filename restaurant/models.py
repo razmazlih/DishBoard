@@ -9,6 +9,9 @@ class Restaurant(models.Model):
     city = models.CharField(max_length=20)
     address = models.CharField(max_length=30)
 
+    class Meta:
+        unique_together = ("name", "address")
+
     def __str__(self):
         return self.name
 
@@ -32,14 +35,6 @@ class OpeningHours(models.Model):
     opening_time = models.TimeField(blank=True, null=True)
     closing_time = models.TimeField(blank=True, null=True)
 
-    def clean(self):
-        if self.is_open and (not self.opening_time or not self.closing_time):
-            raise ValidationError(
-                "Opening and closing times are required when is_open=True"
-            )
-        if self.is_open and self.opening_time >= self.closing_time:
-            raise ValidationError("Opening time must be earlier than closing time")
-
     class Meta:
         unique_together = ("restaurant", "day_of_week")
 
@@ -48,20 +43,17 @@ class OpeningHours(models.Model):
             return f"{self.restaurant.name} - {self.day_of_week}: {self.opening_time} - {self.closing_time}"
         return f"{self.restaurant.name} - {self.day_of_week}: Closed"
 
-
 @receiver(post_save, sender=Restaurant)
 def create_opening_hours(sender, instance, created, **kwargs):
-    if created and not OpeningHours.objects.filter(restaurant=instance).exists():
-        days_of_week = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ]
-        for day in days_of_week:
+    if created:
+        default_time = "00:00"
+        days = OpeningHours.DAYS_OF_WEEK
+
+        for day in days:
             OpeningHours.objects.create(
-                restaurant=instance, day_of_week=day, is_open=False
+                restaurant=instance,
+                day_of_week=day[0],
+                is_open=False,
+                opening_time=default_time,
+                closing_time=default_time,
             )
