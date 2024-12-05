@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+    <title>API Endpoints</title>
+</head>
+
+<body>
+    <h1>רשימת הנתיבים של ה-API</h1>
+    <h2>Restaurants</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>תיאור</th>
+                <th>נתיב מלא</th>
+                <th>שיטה</th>
+                <th>Header</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>קבלת כל המסעדות</td>
+                <td>/info/</td>
+                <td>GET</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>יצירת מסעדה חדשה</td>
+                <td>/info/</td>
+                <td>POST</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "name": "name",
+                            "city": "city",
+                            "address": "address"
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>קבלת מסעדה אחת</td>
+                <td>/info/{id}/</td>
+                <td>GET</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>עדכון פרטים למסעדה</td>
+                <td>/info/{id}/</td>
+                <td>PATCH</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "name": "name",
+                            "city": "city",
+                            "address": "address"
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>קבלת שעות פתיחה (חייבים להשתמש בפרמטר מזהה מסעדה)</td>
+                <td>/opening-houers/?restaurant_id={restaurant_id}</td>
+                <td>GET</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>עדכון שעות פתיחה</td>
+                <td>/opening-houers/{id}/</td>
+                <td>PATCH</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "opening_time": "10:00",
+                            "closing_time": "20:00",
+                            "is_open": true
+                          }
+                    </pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>Menu</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>תיאור</th>
+                <th>נתיב מלא</th>
+                <th>שיטה</th>
+                <th>Header</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>קבלת קטגוריות (חייבים להשתמש בפרמטר מזהה מסעדה)</td>
+                <td>/category/?restaurant_id={restaurant_id}</td>
+                <td>GET</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>יצירת קטגוריה חדשה</td>
+                <td>/category/</td>
+                <td>POST</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "name": "firsts",
+                            "restaurant": 1
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>עדכון קטגוריה קיימת</td>
+                <td>/category/{id}/</td>
+                <td>PATCH</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "name": "main",
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>מחיקת קטגוריה</td>
+                <td>/category/{id}/</td>
+                <td>DELETE</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>יצירת פריט חדש</td>
+                <td>/item/</td>
+                <td>POST</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "category": 3,
+                            "name": "name",
+                            "price": "42.00",
+                            "description": "description"
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>קריאת פריט אחד</td>
+                <td>/item/{id}/</td>
+                <td>GET</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+            <tr>
+                <td>עדכון פריט קיים</td>
+                <td>/item/{id}/</td>
+                <td>PATCH</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>
+                    <pre>
+                        {
+                            "name": "name",
+                            "price": "42.00",
+                            "description": "description"
+                          }
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>מחיקת פריט</td>
+                <td>/item/{id}/</td>
+                <td>DELETE</td>
+                <td>
+                    <code>
+                        Content-Type: application/json
+                    </code>
+                </td>
+                <td>לא נדרש</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
