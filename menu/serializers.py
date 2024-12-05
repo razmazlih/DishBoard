@@ -5,11 +5,15 @@ from .models import Category, Item
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ["id", "name", "price", "description", "is_available"]
+        fields = ["id", "category", "name", "price", "description", "is_available"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    items = ItemSerializer(many=True)
+    items = ItemSerializer(many=True, read_only=True)
     class Meta:
         model = Category
-        fields = ["id", "name", 'items']
+        fields = ["id", "restaurant", "name", 'items']
+
+    def update(self, instance, validated_data):
+        validated_data.pop('restaurant', None)
+        return super().update(instance, validated_data)
