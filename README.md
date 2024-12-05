@@ -132,5 +132,5 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contact
 
 For any questions or suggestions, feel free to reach out at:
-- Linkedin: [Raz Mazlih](www.linkedin.com/in/raz-mazlih)
+- Linkedin: [Raz Mazlih](https://www.linkedin.com/in/raz-mazlih)
 - GitHub: [razmazlih](https://github.com/razmazlih)
