@@ -32,8 +32,8 @@ class OpeningHours(models.Model):
     )
     day_of_week = models.CharField(max_length=10, choices=DAYS_OF_WEEK)
     is_open = models.BooleanField(default=False)
-    opening_time = models.TimeField(blank=True, null=True)
-    closing_time = models.TimeField(blank=True, null=True)
+    opening_time = models.TimeField(default="00:00")
+    closing_time = models.TimeField(default="00:00")
 
     class Meta:
         unique_together = ("restaurant", "day_of_week")
@@ -46,14 +46,10 @@ class OpeningHours(models.Model):
 @receiver(post_save, sender=Restaurant)
 def create_opening_hours(sender, instance, created, **kwargs):
     if created:
-        default_time = "00:00"
         days = OpeningHours.DAYS_OF_WEEK
 
         for day in days:
             OpeningHours.objects.create(
                 restaurant=instance,
                 day_of_week=day[0],
-                is_open=False,
-                opening_time=default_time,
-                closing_time=default_time,
             )
