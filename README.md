@@ -1,3 +1,4 @@
+
 # DishBoard - Restaurant and Menu Management System
 
 ## Project Description
@@ -109,6 +110,38 @@ The system provides various API endpoints for managing restaurants, opening hour
       "description": "Delicious dish description"
   }
   ```
+
+---
+
+## Docker Setup
+
+DishBoard is fully containerized using Docker and Docker Compose.
+
+### Prerequisites
+- Ensure Docker and Docker Compose are installed on your machine.
+
+### Steps to Run with Docker Compose
+1. **Create a `.env` file**  
+   Configure the following environment variables in the `.env` file:
+   ```
+   SECRET_KEY=your_secret_key
+   DEBUG=True
+   ALLOWED_HOSTS=127.0.0.1
+   CORS_ALLOWED_ORIGINS=http://127.0.0.1:8000
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_password
+   POSTGRES_DB=your_db_name
+   ```
+
+2. **Build and Start Services**  
+   Run the following command to start the services:
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the Application**  
+   - The backend API will be available at `http://127.0.0.1:8002`.
+   - The PostgreSQL database will be available at `localhost:5432`.
 
 ---
 
