@@ -24,10 +24,10 @@ services:
 
   backend:
 
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # image: razmaz112/userbase-docker-app:latest
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: razmaz112/dishboard-backend:latest
 
     container_name: dishboard_backend
 
