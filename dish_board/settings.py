@@ -68,9 +68,13 @@ REST_FRAMEWORK = {
 WSGI_APPLICATION = "dish_board.wsgi.application"
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': getenv('POSTGRES_DB', 'default-db'),
+        'USER': getenv('POSTGRES_USER', 'default-user'),
+        'PASSWORD': getenv('POSTGRES_PASSWORD', 'default-pass'),
+        'HOST': getenv("POSTGRES_HOST", 'localhost'),
+        'PORT': '5432',
     }
 }
 

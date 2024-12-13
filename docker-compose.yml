@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_dishboard_db
+
+    # env_file:
+    #   - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    volumes:
+      - postgres_dishboard:/var/lib/postgresql/data
+    networks:
+      - dishboard_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  backend:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: razmaz112/userbase-docker-app:latest
+
+    container_name: dishboard_backend
+
+    env_file:
+      - .env
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: "db"
+      POSTGRES_PORT: 5432
+
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             gunicorn -b 0.0.0.0:8000 dish_board.wsgi:application"
+    ports:
+      - "8002:8000"
+    networks:
+      - dishboard_network
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_dishboard:
+
+
+networks:
+  dishboard_network:
+    driver: bridge
