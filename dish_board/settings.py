@@ -70,10 +70,10 @@ WSGI_APPLICATION = "dish_board.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': getenv('POSTGRES_DB', 'default-db'),
-        'USER': getenv('POSTGRES_USER', 'default-user'),
-        'PASSWORD': getenv('POSTGRES_PASSWORD', 'default-pass'),
-        'HOST': getenv("POSTGRES_HOST", 'localhost'),
+        'NAME': getenv('POSTGRES_DB', 'dishboard-db'),
+        'USER': getenv('POSTGRES_USER', 'razmaz'),
+        'PASSWORD': getenv('POSTGRES_PASSWORD', 'razmaz123'),
+        'HOST': getenv("POSTGRES_HOST", 'db'),
         'PORT': getenv('POSTGRES_PORT', '5432'),
     }
 }
