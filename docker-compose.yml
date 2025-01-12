@@ -65,4 +65,4 @@ volumes:
 
 networks:
   dishboard_network:
-    driver: bridge
+    driver: host
