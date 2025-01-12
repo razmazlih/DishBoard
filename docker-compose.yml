@@ -15,7 +15,7 @@ services:
     volumes:
       - postgres_dishboard:/var/lib/postgresql/data
     networks:
-      - dishboard_network
+      - FoodLink
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h localhost" ]
       interval: 5s
@@ -55,7 +55,7 @@ services:
     ports:
       - "8002:8000"
     networks:
-      - dishboard_network
+      - FoodLink
     volumes:
       - .:/app
 
@@ -64,5 +64,5 @@ volumes:
 
 
 networks:
-  dishboard_network:
+  FoodLink:
     driver: host
