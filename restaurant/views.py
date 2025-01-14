@@ -3,6 +3,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from .models import OpeningHours, Restaurant
 from .serializers import OpeningHoursSerializer, RestaurantSerializer
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 
 class RestaurantViewSet(ModelViewSet):
@@ -41,3 +43,67 @@ class OpeningHouersViewSet(ModelViewSet):
 
         queryset = queryset.filter(restaurant__id=restaurant_id)
         return queryset
+    
+    def is_open(self, request, *args, **kwargs):
+        restaurant_id = self.request.query_params.get("restaurant_id")
+        if not restaurant_id:
+            raise ValidationError({"detail": "The 'restaurant_id' parameter is required."})
+
+        now = make_aware(datetime.now())
+        current_day = now.strftime('%A')
+        current_time = now.time()
+
+        today_hours = OpeningHours.objects.filter(
+            restaurant__id=restaurant_id,
+            day_of_week=current_day
+        ).first()
+
+        if today_hours and today_hours.is_open:
+            opening_time = today_hours.opening_time
+            closing_time = today_hours.closing_time
+
+            if opening_time <= current_time <= closing_time:
+                return Response({
+                    "is_open": True,
+                    "closes_at": closing_time
+                })
+
+        next_day_hours = self.get_next_opening_time(restaurant_id, current_day)
+
+        if next_day_hours:
+            return Response({
+                "is_open": False,
+                "opens_at": next_day_hours["opening_time"],
+                "next_day": next_day_hours["day_of_week"]
+            })
+
+        return Response({
+            "is_open": False,
+            "message": "No opening hours available."
+        })
+
+    def get_next_opening_time(self, restaurant_id, current_day):
+        days_of_week = [
+            "Sunday", "Monday", "Tuesday", "Wednesday",
+            "Thursday", "Friday", "Saturday"
+        ]
+
+        current_index = days_of_week.index(current_day)
+        for i in range(1, 8):  # בדיקה בשבוע הקרוב
+            next_day_index = (current_index + i) % 7
+            next_day = days_of_week[next_day_index]
+
+            next_day_hours = OpeningHours.objects.filter(
+                restaurant__id=restaurant_id,
+                day_of_week=next_day,
+                is_open=True
+            ).first()
+
+            if next_day_hours:
+                return {
+                    "day_of_week": next_day,
+                    "opening_time": next_day_hours.opening_time
+                }
+
+        return None
+        

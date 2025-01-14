@@ -8,4 +8,5 @@ router.register(r'opening-houers', OpeningHouersViewSet, basename='opening_houer
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('is-open/', OpeningHouersViewSet.as_view({'get': 'is_open'}), name='is_open'),
 ]
