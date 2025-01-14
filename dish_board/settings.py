@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "restaurant",
     "menu",
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -46,7 +47,7 @@ ROOT_URLCONF = "dish_board.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'dish_board' / 'templates'],
+        "DIRS": [BASE_DIR / "dish_board" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -67,16 +68,31 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = "dish_board.wsgi.application"
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': getenv('POSTGRES_DB', 'dishboard-db'),
+#         'USER': getenv('POSTGRES_USER', 'razmaz'),
+#         'PASSWORD': getenv('POSTGRES_PASSWORD', 'razmaz123'),
+#         'HOST': getenv("POSTGRES_HOST", 'db'),
+#         'PORT': getenv('POSTGRES_PORT', '5432'),
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': getenv('POSTGRES_DB', 'dishboard-db'),
-        'USER': getenv('POSTGRES_USER', 'razmaz'),
-        'PASSWORD': getenv('POSTGRES_PASSWORD', 'razmaz123'),
-        'HOST': getenv("POSTGRES_HOST", 'db'),
-        'PORT': getenv('POSTGRES_PORT', '5432'),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'your-cloud-name',
+#     'API_KEY': 'your-api-key',
+#     'API_SECRET': 'your-api-secret',
+# }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

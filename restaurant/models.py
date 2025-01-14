@@ -1,13 +1,18 @@
 from django.db import models
-from django.forms import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from cloudinary.models import CloudinaryField
 
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=30)
     city = models.CharField(max_length=20)
     address = models.CharField(max_length=30)
+    photo = CloudinaryField('image', blank=True, null=True)
+    photo_url = models.CharField(
+        max_length=200,
+        default="https://res.cloudinary.com/drlmg8tzf/image/upload/v1736885696/py7lepbjsndwwwt7nszs.jpg",
+    )
 
     class Meta:
         unique_together = ("name", "address")
@@ -42,6 +47,7 @@ class OpeningHours(models.Model):
         if self.is_open:
             return f"{self.restaurant.name} - {self.day_of_week}: {self.opening_time} - {self.closing_time}"
         return f"{self.restaurant.name} - {self.day_of_week}: Closed"
+
 
 @receiver(post_save, sender=Restaurant)
 def create_opening_hours(sender, instance, created, **kwargs):

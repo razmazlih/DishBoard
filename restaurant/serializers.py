@@ -9,6 +9,7 @@ class OpeningHoursSerializer(serializers.ModelSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField(write_only=True, required=False)
     class Meta:
         model = Restaurant
-        fields = ["id", "name", "city", "address"]
+        fields = ["id", "name", "city", "address", "photo_url", "photo"]
