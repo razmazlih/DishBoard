@@ -64,7 +64,7 @@ class OpeningHouersViewSet(ModelViewSet):
         queryset = queryset.filter(restaurant__id=restaurant_id)
         return queryset
     
-    def is_open(self, request, *args, **kwargs):
+    def when_open(self, request, *args, **kwargs):
         restaurant_id = self.request.query_params.get("restaurant_id")
         if not restaurant_id:
             raise ValidationError({"detail": "The 'restaurant_id' parameter is required."})
