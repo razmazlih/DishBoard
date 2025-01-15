@@ -68,23 +68,26 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = "dish_board.wsgi.application"
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': getenv('POSTGRES_DB', 'dishboard-db'),
-        'USER': getenv('POSTGRES_USER', 'razmaz'),
-        'PASSWORD': getenv('POSTGRES_PASSWORD', 'razmaz123'),
-        'HOST': getenv("POSTGRES_HOST", 'db'),
-        'PORT': getenv('POSTGRES_PORT', '5432'),
-    }
-}
+if getenv('DATABASE') != 'test':
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': getenv('POSTGRES_DB', 'dishboard-db'),
+            'USER': getenv('POSTGRES_USER', 'razmaz'),
+            'PASSWORD': getenv('POSTGRES_PASSWORD', 'razmaz123'),
+            'HOST': getenv("POSTGRES_HOST", 'db'),
+            'PORT': getenv('POSTGRES_PORT', '5432'),
+        }
+    }
+else:
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
