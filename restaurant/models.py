@@ -5,9 +5,9 @@ from cloudinary.models import CloudinaryField
 
 
 class Restaurant(models.Model):
-    name = models.CharField(max_length=30)
-    city = models.CharField(max_length=20)
-    address = models.CharField(max_length=30)
+    name = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
     photo = CloudinaryField('image', blank=True, null=True)
     photo_url = models.CharField(
         max_length=200,

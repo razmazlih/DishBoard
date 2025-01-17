@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=50)
     restaurant = models.ForeignKey(
         "restaurant.Restaurant", on_delete=models.CASCADE, related_name="categories"
     )
@@ -20,7 +20,7 @@ class Category(models.Model):
 
 
 class Item(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     description = models.TextField(default="אין תיאור זמין")
     is_available = models.BooleanField(default=True)
