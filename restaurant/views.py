@@ -13,20 +13,20 @@ class RestaurantViewSet(ModelViewSet):
     serializer_class = RestaurantSerializer
 
     def perform_create(self, serializer):
-        image_file = self.request.FILES.get('photo')
+        image_file = self.request.FILES.get("photo")
         if image_file:
             upload_result = cloudinary.uploader.upload(image_file)
-            photo_url = upload_result.get('secure_url')
+            photo_url = upload_result.get("secure_url")
         else:
             photo_url = "https://res.cloudinary.com/drlmg8tzf/image/upload/v1736885696/py7lepbjsndwwwt7nszs.jpg"
-    
+
         serializer.save(photo_url=photo_url)
 
     def perform_update(self, serializer):
-        image_file = self.request.FILES.get('photo')
+        image_file = self.request.FILES.get("photo")
         if image_file:
             upload_result = cloudinary.uploader.upload(image_file)
-            photo_url = upload_result.get('secure_url')
+            photo_url = upload_result.get("secure_url")
             serializer.save(photo_url=photo_url)
         else:
             serializer.save()
@@ -34,7 +34,30 @@ class RestaurantViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         fields = request.query_params.get("fields", None)
         queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
+        now = make_aware(datetime.now())
+        current_day = now.strftime("%A")
+        current_time = now.time()
+
+        restaurants_data = []
+        for restaurant in queryset:
+            today_hours = OpeningHours.objects.filter(
+                restaurant=restaurant, day_of_week=current_day, is_open=True
+            ).first()
+
+            is_open_now = (
+                today_hours
+                and today_hours.opening_time <= current_time <= today_hours.closing_time
+            )
+
+            restaurants_data.append(
+                {"restaurant": restaurant, "is_open_now": bool(is_open_now)}
+            )
+
+        restaurants_data.sort(key=lambda x: x["is_open_now"], reverse=True)
+
+        serializer = self.get_serializer(
+            [r["restaurant"] for r in restaurants_data], many=True
+        )
 
         if fields:
             if "id" not in fields:
@@ -57,25 +80,27 @@ class OpeningHouersViewSet(ModelViewSet):
     def get_queryset(self):
         restaurant_id = self.request.query_params.get("restaurant_id")
         if not restaurant_id:
-            raise ValidationError({"detail": "The 'restaurant_id' parameter is required."})
+            raise ValidationError(
+                {"detail": "The 'restaurant_id' parameter is required."}
+            )
 
         queryset = super().get_queryset()
-
         queryset = queryset.filter(restaurant__id=restaurant_id)
         return queryset
-    
+
     def when_open(self, request, *args, **kwargs):
         restaurant_id = self.request.query_params.get("restaurant_id")
         if not restaurant_id:
-            raise ValidationError({"detail": "The 'restaurant_id' parameter is required."})
+            raise ValidationError(
+                {"detail": "The 'restaurant_id' parameter is required."}
+            )
 
         now = make_aware(datetime.now())
-        current_day = now.strftime('%A')
+        current_day = now.strftime("%A")
         current_time = now.time()
 
         today_hours = OpeningHours.objects.filter(
-            restaurant__id=restaurant_id,
-            day_of_week=current_day
+            restaurant__id=restaurant_id, day_of_week=current_day
         ).first()
 
         if today_hours and today_hours.is_open:
@@ -83,47 +108,45 @@ class OpeningHouersViewSet(ModelViewSet):
             closing_time = today_hours.closing_time
 
             if opening_time <= current_time <= closing_time:
-                return Response({
-                    "is_open": True,
-                    "closes_at": closing_time
-                })
+                return Response({"is_open": True, "closes_at": closing_time})
 
         next_day_hours = self.get_next_opening_time(restaurant_id, current_day)
 
         if next_day_hours:
-            return Response({
-                "is_open": False,
-                "opens_at": next_day_hours["opening_time"],
-                "next_day": next_day_hours["day_of_week"]
-            })
+            return Response(
+                {
+                    "is_open": False,
+                    "opens_at": next_day_hours["opening_time"],
+                    "next_day": next_day_hours["day_of_week"],
+                }
+            )
 
-        return Response({
-            "is_open": False,
-            "message": "No opening hours available."
-        })
+        return Response({"is_open": False, "message": "No opening hours available."})
 
     def get_next_opening_time(self, restaurant_id, current_day):
         days_of_week = [
-            "Sunday", "Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday", "Saturday"
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
         ]
 
         current_index = days_of_week.index(current_day)
-        for i in range(1, 8):  # בדיקה בשבוע הקרוב
+        for i in range(1, 8):
             next_day_index = (current_index + i) % 7
             next_day = days_of_week[next_day_index]
 
             next_day_hours = OpeningHours.objects.filter(
-                restaurant__id=restaurant_id,
-                day_of_week=next_day,
-                is_open=True
+                restaurant__id=restaurant_id, day_of_week=next_day, is_open=True
             ).first()
 
             if next_day_hours:
                 return {
                     "day_of_week": next_day,
-                    "opening_time": next_day_hours.opening_time
+                    "opening_time": next_day_hours.opening_time,
                 }
 
         return None
-        
